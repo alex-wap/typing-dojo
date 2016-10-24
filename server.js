@@ -26,5 +26,5 @@ require('./server/config/routes.js')(app)
 //                     Listen to Port                     //
 ////////////////////////////////////////////////////////////
 app.listen(port, function() {
-    console.log("Full Mean October! ("+port+")");
+    console.log("Typing Dojo! ("+port+")");
 })

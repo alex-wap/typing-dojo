@@ -1,11 +1,13 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Coding Dojo</title>
-        <!-- Bootstrap -->
-        <link rel="stylesheet" href="./css/bootstrap.min.css">
-        <!-- Font-Awesome Library -->
-        <link rel="stylesheet" href="./css/font-awesome.min.css">
+        <title>Typing Dojo</title>
+        <!--Import Google Icon Font-->
+        <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Import materialize.css-->
+        <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
         <!-- Angular Framework -->
         <script src="./angular/angular.min.js" charset="utf-8" defer></script>
@@ -14,40 +16,10 @@
         <script src="./angular/master.js" charset="utf-8" defer></script>
     </head>
     <body ng-app='app'>
-        <div ng-controller="PersonController">
-            {{errors}}
-            <form ng-submit="createPerson()">
-                <input type="text" placeholder="name" ng-model="new_person.name">
-                <input type="number" placeholder="age" ng-model="new_person.age">
-
-                <input type="submit">
-            </form>
-
-            <form ng-submit="editingPerson()" ng-show="editMode">
-                <input type="text" ng-model="edit_person.name" ng-change="field('name')">
-                <input type="number" ng-model="edit_person.age" ng-change="field('age')">
-
-                <input type="submit">
-            </form>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="person in people">
-                        <td ng-bind="person.name"></td>
-                        <td ng-bind="person.age"></td>
-                        <td ng-click="showPerson(person)">E</td>
-                        <td ng-click="deletePerson(person)">X</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <h3>LOGO - Typing Dojo</h3>
+    <!-- nav bar -->
+    <div ng-view></div>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
     </body>
 </html>

@@ -3,42 +3,77 @@
 ////////////////////////////////////////////////////////////
 var app = angular.module('app', ['ngRoute']);
 
-app.factory('PersonFactory', function($http) {
+////////////////////////////////////////////////////////////
+//                        Routes                          //
+////////////////////////////////////////////////////////////
+app.config(function ($routeProvider) {
+    $routeProvider
+    .when('/',{
+        templateUrl: 'partials/index.html',
+        controller: 'MainController'     
+    })  
+    .when('/new',{
+        templateUrl: 'partials/new.html',
+        controller: 'MainController'     
+    })
+    .when('/new_question',{
+        templateUrl: 'partials/question.html',
+        controller: 'MainController'     
+    })  
+    .when('/lets_play',{
+        templateUrl: 'partials/play.html',
+        controller: 'MainController'     
+    })
+    .when('/logout',{
+        templateUrl: 'partials/new.html',
+        controller: 'MainController'     
+    })
+    .otherwise({
+        redirectTo: '/new'
+    });
+});
+////////////////////////////////////////////////////////////
+//                        Factories                       //
+////////////////////////////////////////////////////////////
+app.factory('MainFactory', function($http) {
     var factory = {};
     // var people  = [{name: 'asdf', age: 123}, {name: 'fdsa', age: 321}];
 
     factory.index = function(callback) {
-        $http.get('/people').then(function(response) {
-            callback(response.data);
-        })
+        // $http.get('/people').then(function(response) {
+        //     callback(response.data);
+        // })
     }
     factory.create = function(new_person, callback) {
-        $http.post('/people', new_person).then(function(response) {
-            // console.log('Create Method', response);
-            callback(response.data);
-        })
+        // $http.post('/people', new_person).then(function(response) {
+        //     // console.log('Create Method', response);
+        //     callback(response.data);
+        // })
     }
     factory.delete = function(person, callback) {
-        $http.delete('/people/'+person._id).then(function(response) {
-            callback();
-        });
+        // $http.delete('/people/'+person._id).then(function(response) {
+        //     callback();
+        // });
     }
     factory.update = function(person, callback) {
-        $http.post('/edit/people', person).then(function(response) {
-            console.log('Factory update',person);
-            callback();
-        })
+        // $http.post('/edit/people', person).then(function(response) {
+        //     console.log('Factory update',person);
+        //     callback();
+        // })
     }
 
     return factory;
 })
-
-app.controller('PersonController', function($scope, PersonFactory) {
-    console.log('Person Controller loaded');
+////////////////////////////////////////////////////////////
+//                        Controllers                     //
+////////////////////////////////////////////////////////////
+app.controller('MainController', function($scope, MainFactory) {
+    console.log('Main Controller loaded');
+    $scope.scores = [{name:'Alex',speed:100,time:10},{name:'Elliot',speed:10,time:20},{name:'Phil',speed:600,time:5}]
     $scope.editMode = false;
     var editAttr = {};
 
-    PersonFactory.index(function(data) {
+    MainFactory.index(function(data) {
         console.log(data);
         $scope.people = data;
     });
@@ -53,8 +88,8 @@ app.controller('PersonController', function($scope, PersonFactory) {
     //Submits the edit form so that we can edit the person
     $scope.editingPerson = function() {
         console.log($scope.edit_person);
-        PersonFactory.update(editAttr, function() {
-            PersonFactory.index(function(data) {
+        MainFactory.update(editAttr, function() {
+            MainFactory.index(function(data) {
                 console.log(data);
                 $scope.people = data;
             });
@@ -71,12 +106,12 @@ app.controller('PersonController', function($scope, PersonFactory) {
     $scope.createPerson = function() {
         $scope.errors = {};
         console.log('Creating a person: Angular Controller');
-        PersonFactory.create($scope.new_person, function(data) {
+        MainFactory.create($scope.new_person, function(data) {
             if (data.errors) {
                 console.log(data.errors);
                 $scope.errors = data.errors;
             } else {
-                PersonFactory.index(function(data) {
+                MainFactory.index(function(data) {
                     $scope.people = data;
 
                     $scope.new_person = {};
@@ -86,8 +121,8 @@ app.controller('PersonController', function($scope, PersonFactory) {
     }
     $scope.deletePerson = function(data) {
         console.log('Deleting a person. :[');
-        PersonFactory.delete(data, function() {
-            PersonFactory.index(function(data) {
+        MainFactory.delete(data, function() {
+            MainFactory.index(function(data) {
                 $scope.people = data;
             });
         })

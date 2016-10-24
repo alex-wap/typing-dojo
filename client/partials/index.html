@@ -1,0 +1,23 @@
+<div ng-controller="MainController">
+    <hr>
+    <p style="width: 500">Welcome to CodingDojo! We're excited to have you join our bootcamp! Prior to joining our bootcamp, we want to get you up to speed with our learning platform as you will be spending a lot of time learning new concepts and working on assignments to level up your coding skills.</p>
+    <!-- need ng-model -->
+    <input type="text" placeholder="Type the above text here when the race begins" style="width: 500">
+    <hr>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Speed</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="score in scores"> <!-- | orderBy: score.speed -->
+                <td ng-bind="score.name"></td>
+                <td ng-bind="score.speed+' wpm'"></td>
+                <td ng-bind="score.time+' minutes ago'"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
