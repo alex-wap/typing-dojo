@@ -1,5 +1,9 @@
 <div ng-controller="MainController">
-    <h4>The race is about to start!</h4>
+    <div class="row">
+        <div class="col s9"><h4>The race is about to start!</h4></div>
+        <div class="col s2"><h4>2:00</h4></div>
+    </div>
+    
     <!-- start progress bars -->
     <div class="row">
         <div class="col s2">You</div>
@@ -30,19 +34,21 @@
     </div>
     <!-- end progress bars -->
     <div class="divider"></div>
-    <p id="excerpt"><u>Welcome</u> to CodingDojo! We're excited to have you join our bootcamp! Prior to joining our bootcamp, we want to get you up to speed with our learning platform as you will be spending a lot of time learning new concepts and working on assignments to level up your coding skills.</p>
+    <p id="excerpt"><b><u>Welcome</u></b> to CodingDojo! We're excited to have you join our bootcamp! Prior to joining our bootcamp, we want to get you up to speed with our learning platform as you will be spending a lot of time learning new concepts and working on assignments to level up your coding skills.</p>
 
     <div class="divider"></div>
     <!-- change class via document.getElementById() -->
     <!-- https://stackoverflow.com/questions/195951/change-an-elements-class-with-javascript -->
-    <input type="text" placeholder="Type the above text here when the race begins" class="grey">
+    <input type="text" placeholder="Type the above text here when the race begins" class="red">
     <div class="divider"></div>
     <!-- ng-hide/show -->
-    <div id="end-score">
+<!-- this will be a modal http://materializecss.com/modals.html? -->
+<!--     <div id="end-score">
         Your speed: 117 wpm <a href="#/">redo?</a><br>
         Time: 0:22<br>
         Accuracy: 100%<br>
-    </div>
+    </div> -->
+    <br><br><br><br><br><br><br><br>
     <div class="divider"></div>
     <h5>High Scores</h5>
     <table>
