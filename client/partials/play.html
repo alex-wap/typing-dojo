@@ -33,7 +33,16 @@
     <p id="excerpt"><u>Welcome</u> to CodingDojo! We're excited to have you join our bootcamp! Prior to joining our bootcamp, we want to get you up to speed with our learning platform as you will be spending a lot of time learning new concepts and working on assignments to level up your coding skills.</p>
 
     <div class="divider"></div>
-    <input type="text" placeholder="Type the above text here when the race begins">
+    <!-- change class via document.getElementById() -->
+    <!-- https://stackoverflow.com/questions/195951/change-an-elements-class-with-javascript -->
+    <input type="text" placeholder="Type the above text here when the race begins" class="grey">
+    <div class="divider"></div>
+    <!-- ng-hide/show -->
+    <div id="end-score">
+        Your speed: 117 wpm <a href="#/">redo?</a><br>
+        Time: 0:22<br>
+        Accuracy: 100%<br>
+    </div>
     <div class="divider"></div>
     <h5>High Scores</h5>
     <table>
