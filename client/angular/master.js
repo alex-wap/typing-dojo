@@ -12,12 +12,12 @@ app.config(function ($routeProvider) {
         templateUrl: 'partials/index.html',
         controller: 'MainController'     
     })  
-    .when('/new',{
-        templateUrl: 'partials/new.html',
+    .when('/play',{
+        templateUrl: 'partials/play.html',
         controller: 'MainController'     
     })
-    .when('/new_question',{
-        templateUrl: 'partials/question.html',
+    .when('/practice',{
+        templateUrl: 'partials/practice.html',
         controller: 'MainController'     
     })  
     .when('/lets_play',{
@@ -29,7 +29,7 @@ app.config(function ($routeProvider) {
         controller: 'MainController'     
     })
     .otherwise({
-        redirectTo: '/new'
+        redirectTo: '/'
     });
 });
 ////////////////////////////////////////////////////////////
