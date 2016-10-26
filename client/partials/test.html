@@ -18,12 +18,13 @@
     <div class="divider"></div>
     <p id="excerpt">{{text}}</p>
     <div class="divider"></div>
-    <input type="text" placeholder="Type the above text here when the race begins" ng-model='type'>
+    <input type="text" placeholder="Type the above text here when the race begins" ng-model='type' ng-trim="false">
     <p ng-bind='type'></p>
         <div class="divider"></div>
         <button ng-click="reset()">reset?</button> new?
         <div class="divider"></div>
-        {{words}}
+        {{words}}<br>
+        {{results}}
     <p ng-bind='type2'></p>
         <textarea class='materialize-textarea' ng-model='type2'></textarea>
 

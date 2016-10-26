@@ -71,7 +71,10 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
     $scope.text = "Welcome to CodingDojo! We're excited to have you join our bootcamp!"
     $scope.words = $scope.text.split(" ");
     var editAttr = {};
-    
+    for (var i = 0; i < $scope.words.length-1; i++){
+        $scope.words[i] = $scope.words[i]+" ";
+    }
+    $scope.totaltype = '';
     $scope.startTimer = function () {
         $scope.isDisabled = true;
         $scope.time = 10.0;
@@ -84,18 +87,19 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
                 console.log('word number '+$scope.index+' is correct')
                 console.log('next word is '+$scope.words[$scope.index+1])
                 $scope.index++;
+                $scope.totaltype += $scope.type
                 $scope.type = '';
             }
 
             if ($scope.time <= 0){
                 // $timeout.cancel(timer);
                 $scope.time = 'Time is up!'
-                $scope.isDisabled = false;
+                $scope.results = 'You got '+($scope.index)+' words out of 11. Your wpm is '+Math.round($scope.totaltype.length*6/5)+'. Your cpm is '+Math.round($scope.totaltype.length*6)+'.'
                 return;
             };
             $scope.time -= 0.1;
             $scope.time = Math.round($scope.time*10)/10;
-            console.log('time is '+$scope.time)
+            console.log('time is '+$scope.time);
             $timeout(countdown, 100);
         }
         var timer = $timeout(countdown, 100);
@@ -103,8 +107,11 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
 
     $scope.reset = function () {
         $scope.isDisabled = false;
-        $scope.time = 10;
+        $scope.time = 10.0;
         $scope.index = 0;
+        $scope.results = '';
+        $scope.totaltype = '';
+        $scope.type = '';
     }
 
 
