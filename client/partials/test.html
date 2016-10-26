@@ -9,23 +9,20 @@
         <div class="col s2">You</div>
         <div class="col s8">
             <div class="progress">
-                <div class="determinate orange" style="width: 70%"></div>
+                <div class="determinate orange" style="width: {{progress}}%"></div>
             </div>
         </div>
-        <div class="col s2">0 wpm</div>
+        <div class="col s2">{{wpm}} wpm</div>
     </div>
     <!-- end progress bar -->
     <div class="divider"></div>
-    <p id="excerpt">{{text}}</p>
-    <div class="divider"></div>
-    <input type="text" placeholder="Type the above text here when the race begins" ng-model='type' ng-trim="false">
-    <p ng-bind='type'></p>
+    <p id="excerpt"><span class="orange-text">{{finished}}</span>{{text}}</p>
+    <input type="text" id="text-in" placeholder="Type the above text here when the race begins" ng-model='type' ng-trim="false">
         <div class="divider"></div>
-        <button ng-click="reset()">reset?</button> new?
-        <div class="divider"></div>
-        {{words}}<br>
         {{results}}
-    <p ng-bind='type2'></p>
-        <textarea class='materialize-textarea' ng-model='type2'></textarea>
 
+<!--     <p ng-bind='type'></p> -->
+        <div class="divider"></div>
+
+        <button ng-click="reset()">reset?</button> <br><br> <button>new?</button>
 </div>

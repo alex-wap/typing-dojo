@@ -69,49 +69,76 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
     $scope.editMode = false;
     $scope.isDisabled = false;
     $scope.text = "Welcome to CodingDojo! We're excited to have you join our bootcamp!"
+    $scope.total_length = $scope.text.length;
     $scope.words = $scope.text.split(" ");
+    $scope.finished = "";
     var editAttr = {};
     for (var i = 0; i < $scope.words.length-1; i++){
         $scope.words[i] = $scope.words[i]+" ";
     }
     $scope.totaltype = '';
+    $scope.progress = 0;
+    $scope.wpm = 0;
+    $scope.index = 0;
     $scope.startTimer = function () {
+        document.getElementById('text-in').focus()
         $scope.isDisabled = true;
-        $scope.time = 10.0;
-        $scope.index = 0;
+        $scope.time = 20.0;
+        // $scope.index = 0;
+        
+        // var delay = function(){
+        //     var count = 0;
+        //     $timeout(delay,3000)
+        //     count++;
+        //     return;
+        // }
+
+        // var delay_timer = $timeout(delay,3000);
+        
         var countdown = function() {
-
-            //////////////////////////////////////////////////// stop timer if user finishes paragraph
-
+            // if ($scope.type.length >= $scope.words[$scope.index]){
             if ($scope.type == $scope.words[$scope.index]){
                 console.log('word number '+$scope.index+' is correct')
                 console.log('next word is '+$scope.words[$scope.index+1])
+                $scope.finished = $scope.finished+$scope.text.substring(0,$scope.type.length);
+                $scope.text = $scope.text.substring($scope.type.length);
                 $scope.index++;
                 $scope.totaltype += $scope.type
                 $scope.type = '';
+                $scope.progress = Math.round(100*$scope.totaltype.length/$scope.total_length);
+                console.log('progress is '+$scope.progress);
+                $scope.wpm = Math.round(($scope.totaltype.length/5)/(20-$scope.time)*60);
             }
-
+            if ($scope.totaltype.length == $scope.total_length && $scope.totaltype[-1] == $scope.text[-1]){
+                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/5)/(20-$scope.time)*60)
+                return;
+            }
             if ($scope.time <= 0){
                 // $timeout.cancel(timer);
+                $scope.wpm = Math.round($scope.totaltype.length/(5/3));
                 $scope.time = 'Time is up!'
-                $scope.results = 'You got '+($scope.index)+' words out of 11. Your wpm is '+Math.round($scope.totaltype.length*6/5)+'. Your cpm is '+Math.round($scope.totaltype.length*6)+'.'
+                $scope.results = 'You got '+($scope.index)+' words out of 11. Your wpm is '+$scope.wpm+'. Your cpm is '+Math.round($scope.totaltype.length/(1/3))+'.'
                 return;
             };
-            $scope.time -= 0.1;
+            $scope.time -= 0.06;
             $scope.time = Math.round($scope.time*10)/10;
-            console.log('time is '+$scope.time);
-            $timeout(countdown, 100);
+            // console.log('time is '+$scope.time);
+            $timeout(countdown, 60);
         }
-        var timer = $timeout(countdown, 100);
+        var timer = $timeout(countdown, 60);
     }
 
     $scope.reset = function () {
         $scope.isDisabled = false;
-        $scope.time = 10.0;
+        $scope.text = "Welcome to CodingDojo! We're excited to have you join our bootcamp!"
+        $scope.finished = "";
+        $scope.time = 0;
         $scope.index = 0;
         $scope.results = '';
         $scope.totaltype = '';
         $scope.type = '';
+        $scope.wpm = 0;
+        $scope.progress = 0;
     }
 
 
