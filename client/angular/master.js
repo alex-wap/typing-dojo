@@ -116,8 +116,8 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
             if ($scope.time <= 0){
                 // $timeout.cancel(timer);
                 $scope.wpm = Math.round($scope.totaltype.length/(5/3));
-                $scope.time = 'Time is up!'
-                $scope.results = 'You got '+($scope.index)+' words out of 11. Your wpm is '+$scope.wpm+'. Your cpm is '+Math.round($scope.totaltype.length/(1/3))+'.'
+                $scope.time = 0
+                $scope.results = 'Your wpm is '+$scope.wpm+'. Your cpm is '+Math.round($scope.totaltype.length/(1/3))+'.'
                 return;
             };
             $scope.time -= 0.06;
@@ -126,6 +126,10 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
             $timeout(countdown, 60);
         }
         var timer = $timeout(countdown, 60);
+    }
+
+    $scope.stop = function() {
+        $scope.time = 0;
     }
 
     $scope.reset = function () {

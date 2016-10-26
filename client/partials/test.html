@@ -1,7 +1,10 @@
 <div ng-controller="MainController">
     <div class="row">
-        <div class="col s8"><h4>TEST</h4></div>
-        <div class="col s1" ng-click="isDisabled || startTimer()"><h4>Start</h4></div>
+        <div class="col s6"><h4>TEST</h4></div>
+        <div class="col s1"><h4>3</h4></div>
+        <div class="col s1"><h4>2</h4></div>
+        <div class="col s1"><h4>1</h4></div>
+        <div class="col s1"><h4>Time:</h4></div>
         <div class="col s2"><h4 ng-bind='time'></h4></div>
     </div>
     <!-- start progress bar -->
@@ -18,11 +21,14 @@
     <div class="divider"></div>
     <p id="excerpt"><span class="orange-text">{{finished}}</span>{{text}}</p>
     <input type="text" id="text-in" placeholder="Type the above text here when the race begins" ng-model='type' ng-trim="false">
+        
         <div class="divider"></div>
         {{results}}
-
+        <div class="divider"></div><br>
 <!--     <p ng-bind='type'></p> -->
-        <div class="divider"></div>
-
-        <button ng-click="reset()">reset?</button> <br><br> <button>new?</button>
+        
+        <a class="waves-effect waves-light btn green" ng-click="isDisabled || startTimer()">Start</a>
+        <a class="waves-effect waves-light btn orange" ng-click='stop()'>Stop</a>
+        <a class="waves-effect waves-light btn red" ng-click='reset()'>Reset</a>
+        <a class="waves-effect waves-light btn deep-purple" ng-click=''>New</a>
 </div>
