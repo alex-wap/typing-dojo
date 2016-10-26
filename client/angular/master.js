@@ -20,12 +20,8 @@ app.config(function ($routeProvider) {
         templateUrl: 'partials/practice.html',
         controller: 'MainController'     
     })  
-    .when('/lets_play',{
-        templateUrl: 'partials/play.html',
-        controller: 'MainController'     
-    })
-    .when('/logout',{
-        templateUrl: 'partials/new.html',
+    .when('/test',{
+        templateUrl: 'partials/test.html',
         controller: 'MainController'     
     })
     .otherwise({
@@ -67,11 +63,53 @@ app.factory('MainFactory', function($http) {
 ////////////////////////////////////////////////////////////
 //                        Controllers                     //
 ////////////////////////////////////////////////////////////
-app.controller('MainController', function($scope, MainFactory) {
+app.controller('MainController', function($scope, $timeout, MainFactory) {
     console.log('Main Controller loaded');
     $scope.scores = [{name:'Alex',speed:100,time:10},{name:'Elliot',speed:10,time:20},{name:'Phil',speed:600,time:5}]
     $scope.editMode = false;
+    $scope.isDisabled = false;
+    $scope.text = "Welcome to CodingDojo! We're excited to have you join our bootcamp!"
+    $scope.words = $scope.text.split(" ");
     var editAttr = {};
+    
+    $scope.startTimer = function () {
+        $scope.isDisabled = true;
+        $scope.time = 10.0;
+        $scope.index = 0;
+        var countdown = function() {
+
+            //////////////////////////////////////////////////// stop timer if user finishes paragraph
+
+            if ($scope.type == $scope.words[$scope.index]){
+                console.log('word number '+$scope.index+' is correct')
+                console.log('next word is '+$scope.words[$scope.index+1])
+                $scope.index++;
+                $scope.type = '';
+            }
+
+            if ($scope.time <= 0){
+                // $timeout.cancel(timer);
+                $scope.time = 'Time is up!'
+                $scope.isDisabled = false;
+                return;
+            };
+            $scope.time -= 0.1;
+            $scope.time = Math.round($scope.time*10)/10;
+            console.log('time is '+$scope.time)
+            $timeout(countdown, 100);
+        }
+        var timer = $timeout(countdown, 100);
+    }
+
+    $scope.reset = function () {
+        $scope.isDisabled = false;
+        $scope.time = 10;
+        $scope.index = 0;
+    }
+
+
+
+
 
     MainFactory.index(function(data) {
         console.log(data);

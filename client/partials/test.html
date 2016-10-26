@@ -1,0 +1,30 @@
+<div ng-controller="MainController">
+    <div class="row">
+        <div class="col s8"><h4>TEST</h4></div>
+        <div class="col s1" ng-click="isDisabled || startTimer()"><h4>Start</h4></div>
+        <div class="col s2"><h4 ng-bind='time'></h4></div>
+    </div>
+    <!-- start progress bar -->
+    <div class="row">
+        <div class="col s2">You</div>
+        <div class="col s8">
+            <div class="progress">
+                <div class="determinate orange" style="width: 70%"></div>
+            </div>
+        </div>
+        <div class="col s2">0 wpm</div>
+    </div>
+    <!-- end progress bar -->
+    <div class="divider"></div>
+    <p id="excerpt">{{text}}</p>
+    <div class="divider"></div>
+    <input type="text" placeholder="Type the above text here when the race begins" ng-model='type'>
+    <p ng-bind='type'></p>
+        <div class="divider"></div>
+        <button ng-click="reset()">reset?</button> new?
+        <div class="divider"></div>
+        {{words}}
+    <p ng-bind='type2'></p>
+        <textarea class='materialize-textarea' ng-model='type2'></textarea>
+
+</div>
