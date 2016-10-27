@@ -1,9 +1,7 @@
 <div ng-controller="MainController">
     <div class="row">
-        <div class="col s6"><h4>TEST</h4></div>
-        <div class="col s1"><h4>3</h4></div>
-        <div class="col s1"><h4>2</h4></div>
-        <div class="col s1"><h4>1</h4></div>
+        <div class="col s6"><h4>Practice</h4></div>
+        <div class="col s1"><h4 class="red-text">{{getready}}</h4></div>
         <div class="col s1"><h4>Time:</h4></div>
         <div class="col s2"><h4 ng-bind='time'></h4></div>
     </div>
@@ -19,16 +17,34 @@
     </div>
     <!-- end progress bar -->
     <div class="divider"></div>
-    <p id="excerpt"><span class="orange-text">{{finished}}</span>{{text}}</p>
+    <p id="excerpt"><span class="green-text text-darken-1">{{finished}}</span>{{text}}</p>
     <input type="text" id="text-in" placeholder="Type the above text here when the race begins" ng-model='type' ng-trim="false">
-        
-        <div class="divider"></div>
+        <br>
         {{results}}
-        <div class="divider"></div><br>
-<!--     <p ng-bind='type'></p> -->
-        
-        <a class="waves-effect waves-light btn green" ng-click="isDisabled || startTimer()">Start</a>
-        <a class="waves-effect waves-light btn orange" ng-click='stop()'>Stop</a>
+        <br><br>
+        <a class="waves-effect waves-light btn green" ng-click="isDisabled || realTimer()">Start</a>
+<!--         <a class="waves-effect waves-light btn orange" ng-click='stop()'>Stop</a> -->        
         <a class="waves-effect waves-light btn red" ng-click='reset()'>Reset</a>
         <a class="waves-effect waves-light btn deep-purple" ng-click=''>New</a>
+<!--         <a class="waves-effect waves-light btn green" ng-click="isDisabled || ">REAL TIMER</a> -->
+        <br><br><div class="divider"></div>
+        <div class="row">
+            <div class="col s6">
+            <h5>Your Scores</h5>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Speed</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="score in scores | orderBy: 'speed':true">
+                        <td ng-bind="score.speed+' wpm'"></td>
+                        <td ng-bind="score.time | date:'mediumTime'"></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
 </div>

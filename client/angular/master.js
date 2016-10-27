@@ -65,7 +65,7 @@ app.factory('MainFactory', function($http) {
 ////////////////////////////////////////////////////////////
 app.controller('MainController', function($scope, $timeout, MainFactory) {
     console.log('Main Controller loaded');
-    $scope.scores = [{name:'Alex',speed:100,time:10},{name:'Elliot',speed:10,time:20},{name:'Phil',speed:600,time:5}]
+    // $scope.scores = [{name:'Alex',speed:100,time:10},{name:'Elliot',speed:10,time:20},{name:'Phil',speed:600,time:5}]
     $scope.editMode = false;
     $scope.isDisabled = false;
     $scope.text = "Welcome to CodingDojo! We're excited to have you join our bootcamp!"
@@ -80,7 +80,13 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
     $scope.progress = 0;
     $scope.wpm = 0;
     $scope.index = 0;
+
+////////////////////////////////////////////////////////////
+//                   Start Game Timer                     //
+////////////////////////////////////////////////////////////
+
     $scope.startTimer = function () {
+        $scope.results = ''
         document.getElementById('text-in').focus()
         $scope.isDisabled = true;
         $scope.time = 20.0;
@@ -94,7 +100,17 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
         // }
 
         // var delay_timer = $timeout(delay,3000);
-        
+
+        var addScore = function(){
+            if (!$scope.scores){
+                $scope.scores = [];
+            };
+            var date = new Date();
+                if ($scope.wpm > 0){
+                    $scope.scores.push({speed:$scope.wpm,time:date});
+                };
+        }
+
         var countdown = function() {
             // if ($scope.type.length >= $scope.words[$scope.index]){
             if ($scope.type == $scope.words[$scope.index]){
@@ -110,14 +126,19 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
                 $scope.wpm = Math.round(($scope.totaltype.length/5)/(20-$scope.time)*60);
             }
             if ($scope.totaltype.length == $scope.total_length && $scope.totaltype[-1] == $scope.text[-1]){
-                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/5)/(20-$scope.time)*60)
+                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/5)/(20-$scope.time)*60)+'!'
+                addScore()
                 return;
             }
             if ($scope.time <= 0){
                 // $timeout.cancel(timer);
                 $scope.wpm = Math.round($scope.totaltype.length/(5/3));
                 $scope.time = 0
-                $scope.results = 'Your wpm is '+$scope.wpm+'. Your cpm is '+Math.round($scope.totaltype.length/(1/3))+'.'
+                if ($scope.wpm > 0){
+                    $scope.results = 'Your wpm is '+$scope.wpm+'!'//' Your cpm is '+Math.round($scope.totaltype.length/(1/3))+'.'
+                };
+                addScore();
+                console.log($scope.scores);
                 return;
             };
             $scope.time -= 0.06;
@@ -127,10 +148,91 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
         }
         var timer = $timeout(countdown, 60);
     }
+////////////////////////////////////////////////////////////
+//                     End Game Timer                     //
+////////////////////////////////////////////////////////////
+    $scope.realTimer = function () {
+        $scope.results = '';
+        $scope.type = '';
+        
+        $scope.isDisabled = true;
+        $scope.time = 20.0;
+        
+        // var delay = function(){
+        //     $scope.getready = 'GO'
+        //     $timeout(countdown, 60);
+        //     return;
+        // }
+        $scope.getready = 4;
+        var delay = function(){
+            if ($scope.getready > 0){
+                $scope.getready--;
+                $timeout(delay,1000);;
+            }
+            if ($scope.getready <= 0){
+                $scope.getready = 'GO!'
+                document.getElementById('text-in').focus()
+                $timeout(countdown,60);
+            }
+            return;
+        };
 
-    $scope.stop = function() {
-        $scope.time = 0;
+        var timer = $timeout(delay,0);
+
+        var addScore = function(){
+            if (!$scope.scores){
+                $scope.scores = [];
+            };
+            var date = new Date();
+                if ($scope.wpm > 0){
+                    $scope.scores.push({speed:$scope.wpm,time:date});
+                };
+        }
+
+        var countdown = function() {
+            // if ($scope.type.length >= $scope.words[$scope.index]){
+            if ($scope.type == $scope.words[$scope.index]){
+                console.log('word number '+$scope.index+' is correct')
+                console.log('next word is '+$scope.words[$scope.index+1])
+                $scope.finished = $scope.finished+$scope.text.substring(0,$scope.type.length);
+                $scope.text = $scope.text.substring($scope.type.length);
+                $scope.index++;
+                $scope.totaltype += $scope.type
+                $scope.type = '';
+                $scope.progress = Math.round(100*$scope.totaltype.length/$scope.total_length);
+                console.log('progress is '+$scope.progress);
+                $scope.wpm = Math.round(($scope.totaltype.length/5)/(20-$scope.time)*60);
+            }
+            if ($scope.totaltype.length == $scope.total_length && $scope.totaltype[-1] == $scope.text[-1]){
+                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/5)/(20-$scope.time)*60)+'!'
+                addScore()
+                return;
+            }
+            if ($scope.time <= 0){
+                // $timeout.cancel(timer);
+                $scope.wpm = Math.round($scope.totaltype.length/(5/3));
+                $scope.time = 0
+                if ($scope.wpm > 0){
+                    $scope.results = 'Your wpm is '+$scope.wpm+'!'//' Your cpm is '+Math.round($scope.totaltype.length/(1/3))+'.'
+                };
+                addScore();
+                console.log($scope.scores);
+                return;
+            };
+            $scope.time -= 0.06;
+            $scope.time = Math.round($scope.time*10)/10;
+            // console.log('time is '+$scope.time);
+            $timeout(countdown, 60);
+        }
+        // var timer = $timeout(countdown, 60);
     }
+
+
+    // $scope.stop = function() {
+    //     $scope.time = 0;
+    //     $scope.totaltype = "";
+    //     $scope.getready = "";
+    // }
 
     $scope.reset = function () {
         $scope.isDisabled = false;
