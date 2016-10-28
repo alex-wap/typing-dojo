@@ -1,70 +1,75 @@
-<div ng-controller="MainController">
-    <div class="row">
-        <div class="col s9"><h4>The race is about to start!</h4></div>
-        <div class="col s2"><h4>2:00</h4></div>
-    </div>
-    
-    <!-- start progress bars -->
-    <div class="row">
-        <div class="col s2">You</div>
-        <div class="col s8">
-            <div class="progress">
-                <div class="determinate orange" style="width: 70%"></div>
-            </div>
+<div class="row" ng-init='realTimer()'>
+    <div class="col s6"><h4>Good Luck!</h4></div>
+    <div class="col s1"><h4 class="red-text">{{getready}}</h4></div>
+    <div class="col s1"><h4>Time:</h4></div>
+    <div class="col s2"><h4 ng-bind='time'></h4></div>
+</div>
+<!-- start progress bar -->
+<div class="row" id="progress_bar">
+    <div class="col s2">You</div>
+    <div class="col s8">
+        <div class="progress">
+            <div class="determinate orange" style="width: {{progress}}%"></div>
         </div>
-        <div class="col s2">0 wpm</div>
     </div>
-    <div class="row">
-        <div class="col s2">Guest</div>
-        <div class="col s8">
-            <div class="progress">
-                <div class="determinate" style="width: 10%"></div>
-            </div>
+    <div class="col s2">{{wpm}} wpm</div>
+</div>
+<div class="row">
+    <div class="col s2">You</div>
+    <div class="col s8">
+        <div class="progress">
+            <div class="determinate" style="width: {{progress}}%"></div>
         </div>
-        <div class="col s2">0 wpm</div>
     </div>
-    <div class="row">
-        <div class="col s2">Guest</div>
-        <div class="col s8">
-            <div class="progress">
-                <div class="determinate" style="width: 20%"></div>
-            </div>
+    <div class="col s2">{{wpm}} wpm</div>
+</div>
+<div class="row">
+    <div class="col s2">You</div>
+    <div class="col s8">
+        <div class="progress">
+            <div class="determinate" style="width: {{progress}}%"></div>
         </div>
-        <div class="col s2">0 wpm</div>
     </div>
-    <!-- end progress bars -->
-    <div class="divider"></div>
-    <p id="excerpt"><b><u>Welcome</u></b> to CodingDojo! We're excited to have you join our bootcamp! Prior to joining our bootcamp, we want to get you up to speed with our learning platform as you will be spending a lot of time learning new concepts and working on assignments to level up your coding skills.</p>
-
-    <div class="divider"></div>
-    <!-- change class via document.getElementById() -->
-    <!-- https://stackoverflow.com/questions/195951/change-an-elements-class-with-javascript -->
-    <input type="text" placeholder="Type the above text here when the race begins" class="red">
-    <div class="divider"></div>
-    <!-- ng-hide/show -->
-<!-- this will be a modal http://materializecss.com/modals.html? -->
-<!--     <div id="end-score">
-        Your speed: 117 wpm <a href="#/">redo?</a><br>
-        Time: 0:22<br>
-        Accuracy: 100%<br>
-    </div> -->
-    <br><br><br><br><br><br><br><br>
-    <div class="divider"></div>
-    <h5>High Scores</h5>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Speed</th>
-                <th>Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="score in scores | orderBy: 'speed':true">
-                <td ng-bind="score.name"></td>
-                <td ng-bind="score.speed+' wpm'"></td>
-                <td ng-bind="score.time+' minutes ago'"></td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="col s2">{{wpm}} wpm</div>
+</div>
+<!-- end progress bar -->
+<div class="divider"></div>
+<div class="row">
+    <div class="col s12">
+        <p id="excerpt" style="font-size: 16pt;"><span class="green-text text-darken-1" ng-bind='finished'></span><u><b><span ng-bind='current'></span></b></u><span ng-bind='text'></span></p>
+    </div>
+</div>
+<div class="row">
+    <div class="input-field col s6">
+        <input type="text" id="text-in" placeholder="Type the above text here when the race begins" ng-model='type' ng-trim="false" ng-disabled="text_disable" ng-style="inputStyle">
+    </div>
+</div>
+    <b><span ng-bind='results'></span></b>
+    <br><br>
+    <a class="waves-effect waves-light btn green" ng-click="isDisabled || realTimer()">Start</a>
+<!--         <a class="waves-effect waves-light btn orange" ng-click='stop()'>Stop</a> -->        
+    <a class="waves-effect waves-light btn orange" ng-click='resetDisabled || reset()'>Reset</a>
+    <a class="waves-effect waves-light btn red" ng-click='new()'>New</a>
+<!--         <a class="waves-effect waves-light btn green" ng-click="isDisabled || ">REAL TIMER</a> -->
+    <br><br><div class="divider"></div>
+    <div class="row">
+        <div class="col s6">
+        <h5>Top Scores</h5>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Speed</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="score in scores | orderBy: 'speed':true">
+                    <td ng-bind="username"></td>
+                    <td ng-bind="score.speed+' wpm'"></td>
+                    <td ng-bind="score.time | date:'mediumTime'"></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
 </div>
