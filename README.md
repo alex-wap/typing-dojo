@@ -1,19 +1,8 @@
 ## Typing Dojo
 
 
-This is my final project for Coding Dojo. 
+Typing Dojo is a typing game that lets you race against other users in real time (using web sockets).
 
 
 Technology Used:
-
-MongoDB
-
-Express
-
-AngularJS
-
-Node.js
-
-Socket-IO
-
-Materialize
+JavaScript, MongoDB, Express.js, AngularJS, Node.js, Socket.io, Materialize, AWS EC2, GitHub, HTML, CSS
