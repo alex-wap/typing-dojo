@@ -1,14 +1,14 @@
 {
-  "name": "1016FullMean",
+  "name": "TypingDojo",
   "version": "1.0.0",
-  "description": "Description goes here. This version contains angular & angular route support.",
+  "description": "Typing game",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "keywords": [],
-  "author": "Howard Jiang <me@howardjiang.com> (http://howardjiang.com)",
+  "author": "Alex Wapniarski",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.2",
