@@ -22,20 +22,6 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <!-- Sockets -->
         <script type ="text/javascript" src="/socket.io/socket.io.js"></script>
-        <script type ="text/javascript">
-        $(document).ready(function (){
-            var socket = io.connect();
-            socket.emit("game on");
-            socket.on('total users', function(usercount){
-                $('#users').html(usercount);
-            });
-            socket.on('player join', function(){
-                console.log('add progress bar')
-                $('#progress_bar').html('<br><div class="col s2">Elliot</div><div class="col s8"><div class="progress"><div class="determinate" style="width: {{progress}}%"></div></div></div><div class="col s2">0 wpm</div>');
-            });
-        });
-
-    </script>
     </head>
     <body ng-app='app'>
     <div class="container">
@@ -43,7 +29,7 @@
         <div class="nav-wrapper orange">
           <a href="#/" class="brand-logo left" style="margin-left: 10px;">Typing Dojo</a>
           <ul id="nav-mobile" class="right">
-            <li><a href="#/">Play</a></li>
+            <li><a href="#/play">Play</a></li>
             <li><a href="#/practice">Practice</a></li>
           </ul>
         </div>
