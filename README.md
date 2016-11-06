@@ -8,3 +8,11 @@ Technology Used:
 
 
 JavaScript, MongoDB, Express.js, AngularJS, Node.js, Socket.io, Materialize, AWS EC2, GitHub, HTML, CSS
+
+
+### To Do
+
+* Multiplayer with 3+ players
+* More excerpts 
+* Private rooms
+* 
