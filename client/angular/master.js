@@ -48,8 +48,8 @@ app.factory('MainFactory', function($http) {
         }
     }
     factory.paragraphs = ["Right now there are three people in chat, but there's no way of knowing exactly who until you are in there, and the chat room she finds not so comforting.",
-                        "Prior to joining our bootcamp, we want to get you up to speed with our learning platform as you will be spending a lot of time learning new concepts and working on assignments to level up your coding skills.",
-                        "Never gonna give you up, never gonna let you down. Never gonna run around and desert you. Never gonna make you cry, never gonna say goodbye. Never gonna tell a lie and hurt you.",
+                        "Prior to joining our bootcamp, we want to get you up to speed with our learning platform as you will be spending a lot of time learning new concepts.",
+                        "Never gonna give you up, never gonna let you down. Never gonna run around and desert you. Never gonna make you cry, never gonna say goodbye.",
                         "First appearing in 1991, Python is a general-purpose, high-level, interpreted programming language whose design focus emphasizes code readability.",
                         "As you progress through the platform, you'll be seeing snippets of code that will help you complete the assignments.",
                         "There are three ways of attaching CSS to a document: inline, internal, and external. Inline and internal CSS are considered to be bad practices.",
@@ -102,7 +102,7 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
         $scope.results = '';
         $scope.type = '';
         $scope.isDisabled = true;
-        $scope.time = 45.0;
+        $scope.time = 45.00;
         $scope.getready = 4;
 
         var delay = function(){
@@ -113,7 +113,7 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
             if ($scope.getready <= 0){
                 $scope.text_disable = false;
                 $scope.getready = 'GO!'
-                $timeout(countdown,60);
+                $timeout(countdown,20);
             }
             return;
         };
@@ -202,6 +202,7 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
             }
             // give score if finished
             if ($scope.totaltype.length == $scope.total_length && $scope.totaltype[-1] == $scope.text[-1]){
+                console.log($scope.total_length+" characters in "+(45-$scope.time)+" seconds. with "+$scope.time+" seconds left.")
                 $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/5)/(45-$scope.time)*60)+'!'
                 $scope.getready = "";
                 addScore()
@@ -228,9 +229,9 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
                 $scope.resetOn = true;
                 return;
             };
-            $scope.time -= 0.06;
-            $scope.time = Math.round($scope.time*10)/10;
-            $timeout(countdown, 60);
+            $scope.time -= 0.02;
+            $scope.time = Math.round($scope.time*1000)/1000;
+            $timeout(countdown, 20);
         }
     }
 
@@ -369,7 +370,7 @@ app.controller('GameController', function($scope, $timeout, MainFactory) {
         $scope.results = '';
         $scope.type = '';
         $scope.isDisabled = true;
-        $scope.time = 45.0;
+        $scope.time = 45.00;
         $scope.getready = 15;
 
         var delay = function(){
@@ -380,7 +381,7 @@ app.controller('GameController', function($scope, $timeout, MainFactory) {
             if ($scope.getready <= 0){
                 $scope.text_disable = false;
                 $scope.getready = 'GO!'
-                $timeout(countdown,60);
+                $timeout(countdown,20);
             }
             return;
         };
@@ -482,9 +483,9 @@ app.controller('GameController', function($scope, $timeout, MainFactory) {
                 $scope.resetOn = true;
                 return;
             };
-            $scope.time -= 0.06;
-            $scope.time = Math.round($scope.time*10)/10;
-            $timeout(countdown, 60);
+            $scope.time -= 0.02;
+            $scope.time = Math.round($scope.time*100)/100;
+            $timeout(countdown, 20);
         }
     }
 
