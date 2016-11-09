@@ -16,8 +16,8 @@ app.config(function ($routeProvider) {
         templateUrl: 'partials/play.html',
         controller: 'GameController'     
     })
-    .when('/practice',{
-        templateUrl: 'partials/practice.html',
+    .when('/speed',{
+        templateUrl: 'partials/speed.html',
         controller: 'MainController'     
     })  
     .otherwise({
