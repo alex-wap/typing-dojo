@@ -7,7 +7,7 @@ Typing Dojo is a typing game that lets you race against other users in real time
 ## Technology Used:
 
 
-JavaScript, MongoDB, Express.js, AngularJS, Node.js, Socket.io, Materialize, AWS EC2, GitHub, HTML, CSS
+JavaScript, MongoDB, Express.js, AngularJS, Node.js, Socket.io, Materialize, AWS EC2, Git, HTML, CSS
 
 
 ### To Do
@@ -16,3 +16,5 @@ JavaScript, MongoDB, Express.js, AngularJS, Node.js, Socket.io, Materialize, AWS
 * More excerpts 
 * Private rooms
 * Ready up button for timing
+* Add ghost race option
+* Add time to complete in results
