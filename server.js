@@ -31,24 +31,28 @@ var server = app.listen(port, function() {
 })
 
 var io = require('socket.io').listen(server);
-io.sockets.on('connection', function (socket) {
-  clients.push(socket);
-  console.log("User connected");
-  console.log(clients.length);
 
+// on connection
+io.sockets.on('connection', function (socket) {
+  // add id to client list
+  clients.push(socket.id);
+
+  // update client list on client
+  io.emit('all users', clients);
+  // console.log("User connected");
+  // console.log(clients.length);
+
+  // update client list on disconnect
   socket.on('disconnect', function(socket) {
-    var i = clients.indexOf(socket);
+    var i = clients.indexOf(socket.id);
     clients.splice(i, 1);
     console.log(clients.length);
-    io.emit('player join', clients.length);
+    // update client list on client
+    io.emit('all users', clients);
   });
 
-  io.emit('total users', clients.length);
-  if (io.engine.clientsCount > 1){
-    console.log('start game countdown');
 
-  }
-
+  // broadcast positions
   socket.on("update",function(data){
     socket.broadcast.emit('update position', data); 
   })
@@ -57,9 +61,11 @@ io.sockets.on('connection', function (socket) {
   //   socket.emit('update position', 'Cow goes moo'); 
   // }, 2000);
 
-  
-socket.on("game on", function (data){
-  io.emit('player join', clients.length);
-})
+  // start game if client count is greater than 1
+  socket.on("game on", function (data){
+    if (io.engine.clientsCount > 1){
+      io.emit('player join', clients);
+    }
+  })
 
 })

@@ -1,0 +1,75 @@
+<div id="TestController" ng-controller="TestController">
+<script type ="text/javascript">
+$(document).ready(function (){
+    var interval;
+    var socket = io.connect();
+    socket.emit("game on");
+    socket.on('all users', function(clients){
+        $('#all_users').html(clients);
+        $('#users').html("Users Connected: "+clients.length);
+    });
+    socket.on('player join', function(clients){
+        interval = setInterval(function () {
+            socket.emit("update",{
+            	getready : angular.element('#TestController').scope().getready,
+            	time : angular.element('#TestController').scope().time,
+            	progress : angular.element('#TestController').scope().progress,
+            	wpm : angular.element('#TestController').scope().wpm
+            });
+        },2000);
+        angular.element('#TestController').scope().realTimer();
+        console.log('add progress bar')
+        $('#progress_bar').html('<br><div class="col s2">Opponent</div><div class="col s8"><div class="progress"><div class="determinate" style="width:0%"></div></div></div><div class="col s2">0 wpm</div>');
+    });
+
+    socket.on('update position', function(data){
+        console.log(data);
+        angular.element('#TestController').scope().time = data.time;
+        angular.element('#TestController').scope().getready = data.getready;
+        $('#progress_bar').html('<br><div class="col s2">Opponent</div><div class="col s8"><div class="progress"><div class="determinate" style="width:'+data.progress+'%"></div></div></div><div class="col s2">'+data.wpm+' wpm</div>');
+    });
+
+});
+
+</script>
+<br>
+<div class="row">
+<div class="col s12" id="all_users"></div>
+    <div class="col s12" id="users"></div>
+</div>
+<div class="divider"></div>
+
+<div class="row">
+    <div class="col s4"><h4>Good Luck!</h4></div>
+    <div class="col s2"><h4 class="red-text" ng-bind='getready' id="getready"></h4></div>
+    <div class="col s2"><h4>Time:</h4></div>
+    <div class="col s2"><h4 ng-bind='time' id="time"></h4></div>
+</div>
+<!-- start progress bar -->
+<!-- start socket input -->
+<div class="row" id="progress_bar">
+</div>
+<!-- end socket input -->
+<div class="row">
+    <div class="col s2">You</div>
+    <div class="col s8">
+        <div class="progress">
+            <div class="determinate" style="width: {{progress}}%"></div>
+        </div>
+    </div>
+    <div class="col s2">{{wpm}} wpm</div>
+</div>
+<!-- end progress bar -->
+<div class="divider"></div>
+<div class="row">
+    <div class="col s12">
+        <p id="excerpt" style="font-size: 16pt;"><span class="green-text text-darken-1" ng-bind='finished'></span><u><b><span ng-bind='current'></span></b></u><span ng-bind='text'></span></p>
+    </div>
+</div>
+<div class="row">
+    <div class="input-field col s6">
+        <input type="text" id="text-in" placeholder="Type the above text here when the race begins" ng-model='type' ng-trim="false" ng-disabled="text_disable" ng-style="inputStyle">
+    </div>
+</div>
+    <b><span ng-bind='results'></span></b>
+</div>

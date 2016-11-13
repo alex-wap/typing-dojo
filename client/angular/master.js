@@ -20,6 +20,9 @@ app.config(function ($routeProvider) {
         templateUrl: 'partials/speed.html',
         controller: 'MainController'     
     })  
+    .when('/test',{
+        templateUrl: 'partials/test.html',
+    })
     .otherwise({
         redirectTo: '/'
     });
@@ -64,6 +67,275 @@ app.factory('MainFactory', function($http) {
 ////////////////////////////////////////////////////////////
 //                        Controllers                     //
 ////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+//                   Game Controller                      //
+////////////////////////////////////////////////////////////
+
+app.controller('TestController', function($scope, $timeout, MainFactory) {
+    console.log('Test Controller loaded');
+
+    // $scope.username = prompt("please enter a username");
+    $scope.paragraphs = MainFactory.paragraphs;
+
+    $scope.inputStyle = {'background-color':'none'}
+    $scope.resetOn = false;
+    $scope.editMode = false;
+    $scope.isDisabled = false;
+    $scope.resetDisabled = true;
+    $scope.new_paragraph = 0;
+    $scope.text = $scope.paragraphs[$scope.new_paragraph];
+    $scope.total_length = $scope.text.length;
+    $scope.words = $scope.text.split(" ");
+    $scope.finished = "";
+    var editAttr = {};
+    for (var i = 0; i < $scope.words.length-1; i++){
+        $scope.words[i] = $scope.words[i]+" ";
+    }
+    $scope.totaltype = '';
+    $scope.progress = 0;
+    $scope.wpm = 0;
+
+    $scope.index = 0;
+    $scope.text_disable = true;
+
+////////////////////////////////////////////////////////////
+//                   Start Game Timer                     //
+////////////////////////////////////////////////////////////
+
+    $scope.realTimer = function () {
+
+        $scope.current = $scope.words[0];
+        $scope.text = $scope.text.substring($scope.current.length);
+
+        $scope.results = '';
+        $scope.type = '';
+        $scope.isDisabled = true;
+        $scope.time = 45.00;
+        $scope.getready = 15;
+
+        var delay = function(){
+            if ($scope.getready > 0){
+                $scope.getready--;
+                $timeout(delay,1000);
+            }
+            if ($scope.getready <= 0){
+                $scope.text_disable = false;
+                $scope.getready = 'GO!'
+                $timeout(countdown,20);
+            }
+            return;
+        };
+
+        var timer = $timeout(delay,0);
+
+        var addScore = function(){
+            if (!$scope.scores){
+                $scope.scores = [];
+            };
+            var date = new Date();
+                if ($scope.wpm > 0){
+                    $scope.scores.push({speed:$scope.wpm,time:date});
+                };
+        }
+
+        var reset1 = function () {
+            console.log('inside reset1');
+            $scope.resetOn = false;
+            // console.log($scope.resetOn);
+            $scope.isDisabled = false;
+            $scope.resetDisabled = true;
+            $scope.text = $scope.paragraphs[$scope.new_paragraph]
+            $scope.finished = "";
+            $scope.time = "";
+            $scope.index = 0;
+            $scope.results = '';
+            $scope.totaltype = '';
+            $scope.type = '';
+            $scope.wpm = 0;
+            $scope.progress = 0;
+            $scope.text_disable = true;
+            $scope.current = "";
+            $scope.getready = "";
+        }
+
+        var countdown = function() {
+            document.getElementById('text-in').focus()
+
+            // activate reset button after delay
+            if ($scope.time < 43){
+                $scope.resetDisabled = false;
+            }
+            // call reset
+            if ($scope.resetOn == true){
+                reset1();
+                return;
+            }
+            // check for mistakes and change color of text box
+            for (var i = 0; i<$scope.type.length;i++){
+                if($scope.type[i] != $scope.current[i]){
+                    $scope.inputStyle = {'background-color':'#f44336'};
+                    break;
+                }
+                else{
+                    $scope.inputStyle = {'background-color':'none'};
+                }
+            }
+            if($scope.type.length == 0){$scope.inputStyle = {'background-color':'none'};}
+
+            // check if word is finished
+            if ($scope.type == $scope.current){
+                $scope.finished = $scope.finished+$scope.current;
+                $scope.index++;
+                $scope.current = $scope.words[$scope.index];
+                if ($scope.current){
+                    $scope.text = $scope.text.substring($scope.current.length);
+                }
+                $scope.totaltype += $scope.type
+                $scope.type = '';
+                $scope.progress = Math.round(100*$scope.totaltype.length/$scope.total_length);
+                $scope.wpm = Math.round(($scope.totaltype.length/5)/(45-$scope.time)*60);
+            }
+            // give score if finished
+            if ($scope.totaltype.length == $scope.total_length && $scope.totaltype[-1] == $scope.text[-1]){
+                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/5)/(45-$scope.time)*60)+'!'
+                $scope.getready = "";
+                addScore()
+                $scope.text_disable = true;
+                $scope.inputStyle = {'background-color':'none'};
+                $scope.resetDisabled = false;
+                $scope.resetOn = true;
+                return;
+            }
+            // give score if time runs out
+            if ($scope.time <= 0){
+                $scope.wpm = Math.round($scope.totaltype.length/(15/4));
+                $scope.time = 0
+                if ($scope.wpm > 0){
+                    $scope.getready = "";
+                    $scope.results = 'Your wpm is '+$scope.wpm+'!'
+                    addScore();
+                };
+                // console.log($scope.scores);
+                $scope.text_disable = true;
+                $scope.type = "";
+                $scope.inputStyle = {'background-color':'none'};
+                $scope.resetDisabled = false;
+                $scope.resetOn = true;
+                return;
+            };
+            $scope.time -= 0.02;
+            $scope.time = Math.round($scope.time*100)/100;
+            $timeout(countdown, 20);
+        }
+    }
+
+////////////////////////////////////////////////////////////
+//                     End Game Timer                     //
+////////////////////////////////////////////////////////////
+
+    $scope.reset = function () {
+        console.log('inside reset');
+        if ($scope.resetOn == false){
+            $scope.resetOn = true;
+            $scope.inputStyle = {'background-color':'none'};
+        }
+        else{
+            $scope.resetOn = false;
+            $scope.isDisabled = false;
+            $scope.text = $scope.paragraphs[$scope.new_paragraph];
+            $scope.finished = "";
+            $scope.time = "";
+            $scope.index = 0;
+            $scope.results = '';
+            $scope.totaltype = '';
+            $scope.type = '';
+            $scope.wpm = 0;
+            $scope.progress = 0;
+            $scope.text_disable = true;
+            $scope.current = "";
+            $scope.getready = "";
+            $scope.inputStyle = {'background-color':'none'};
+        }  
+    }
+
+    $scope.new = function () {
+        $scope.new_paragraph = Math.floor(Math.random()*$scope.paragraphs.length)
+        $scope.text = $scope.paragraphs[$scope.new_paragraph];
+        $scope.total_length = $scope.text.length;
+        $scope.words = $scope.text.split(" ");
+        $scope.finished = "";
+        for (var i = 0; i < $scope.words.length-1; i++){
+            $scope.words[i] = $scope.words[i]+" ";
+        }
+        $scope.time = "";
+        $scope.index = 0;
+        $scope.results = '';
+        $scope.totaltype = '';
+        $scope.type = '';
+        $scope.wpm = 0;
+        $scope.progress = 0;
+        $scope.text_disable = true;
+        $scope.current = "";
+        $scope.getready = "";
+        $scope.inputStyle = {'background-color':'none'};
+        $scope.resetOn = false;
+        $scope.isDisabled = false;
+    }
+
+
+
+////////////////////////////////////////////////////////////
+//                     End Game Code                      //
+////////////////////////////////////////////////////////////
+
+
+    MainFactory.index(function(data) {
+        // console.log(data);
+        $scope.people = data;
+    });
+
+    $scope.createPerson = function() {
+        $scope.errors = {};
+        console.log('Creating a person: Angular Controller');
+        MainFactory.create($scope.new_person, function(data) {
+            if (data.errors) {
+                console.log(data.errors);
+                $scope.errors = data.errors;
+            } else {
+                MainFactory.index(function(data) {
+                    $scope.people = data;
+
+                    $scope.new_person = {};
+                });
+            }
+        })
+    }
+    $scope.storeUser = function() {
+        console.log($scope.username)
+        MainFactory.user = $scope.username;
+        console.log(MainFactory.username)
+        $location.url('/');
+    }
+})
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////
+//                   Other Controllers                    //
+////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
 app.controller('MainController', function($scope, $timeout, MainFactory) {
     $scope.username = prompt("please enter a username");
     console.log('Main Controller loaded');
