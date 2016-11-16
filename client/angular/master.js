@@ -79,24 +79,51 @@ app.controller('TestController', function($scope, $timeout, MainFactory) {
     $scope.paragraphs = MainFactory.paragraphs;
 
     $scope.inputStyle = {'background-color':'none'}
+    // $scope.resetOn = false;
+    // $scope.editMode = false;
+    // $scope.isDisabled = false;
+    // $scope.resetDisabled = true;
+    // $scope.new_paragraph = 0;
+    // $scope.text = $scope.paragraphs[$scope.new_paragraph];
+    // $scope.total_length = $scope.text.length;
+    // $scope.words = $scope.text.split(" ");
+    // $scope.finished = "";
+    // var editAttr = {};
+    // for (var i = 0; i < $scope.words.length-1; i++){
+    //     $scope.words[i] = $scope.words[i]+" ";
+    // }
+    // $scope.totaltype = '';
+    // $scope.progress = 0;
+    // $scope.wpm = 0;
+
+    // $scope.index = 0;
+    // $scope.text_disable = true;
+    $scope.start = function(paragraph) {
+        console.log(paragraph);
+        $scope.text = paragraph;
+        console.log($scope.text);
+        $scope.total_length = $scope.text.length;
+        $scope.words = $scope.text.split(" ");
+        $scope.finished = "";
+        for (var i = 0; i < $scope.words.length-1; i++){
+            $scope.words[i] = $scope.words[i]+" ";
+            $scope.totaltype = '';
+        }
+        $scope.progress = 0;
+        $scope.wpm = 0;
+        $scope.index = 0;
+        $scope.nextRace = false;
+    };
+    $scope.nextRace = false;
     $scope.resetOn = false;
     $scope.editMode = false;
     $scope.isDisabled = false;
     $scope.resetDisabled = true;
-    $scope.new_paragraph = 0;
-    $scope.text = $scope.paragraphs[$scope.new_paragraph];
-    $scope.total_length = $scope.text.length;
-    $scope.words = $scope.text.split(" ");
-    $scope.finished = "";
-    var editAttr = {};
-    for (var i = 0; i < $scope.words.length-1; i++){
-        $scope.words[i] = $scope.words[i]+" ";
-    }
-    $scope.totaltype = '';
-    $scope.progress = 0;
-    $scope.wpm = 0;
-
-    $scope.index = 0;
+    $scope.text = "";
+    // $scope.totaltype = '';
+    // $scope.progress = 0;
+    // $scope.wpm = 0;
+    // $scope.index = 0;
     $scope.text_disable = true;
 
 ////////////////////////////////////////////////////////////
@@ -104,15 +131,35 @@ app.controller('TestController', function($scope, $timeout, MainFactory) {
 ////////////////////////////////////////////////////////////
 
     $scope.realTimer = function () {
-
+        var reset1 = function () {
+            console.log('inside reset1');
+            $scope.resetOn = false;
+            // console.log($scope.resetOn);
+            $scope.isDisabled = false;
+            $scope.resetDisabled = true;
+            // $scope.text = $scope.paragraphs[$scope.new_paragraph]
+            $scope.finished = "";
+            $scope.time = 0;
+            $scope.index = 0;
+            $scope.results = '';
+            $scope.totaltype = '';
+            $scope.type = '';
+            $scope.wpm = 0;
+            $scope.progress = 0;
+            $scope.text_disable = true;
+            $scope.current = "";
+            $scope.getready = "";
+            $scope.nextRace = false;
+        }
+        reset1();
         $scope.current = $scope.words[0];
         $scope.text = $scope.text.substring($scope.current.length);
 
         $scope.results = '';
         $scope.type = '';
         $scope.isDisabled = true;
-        $scope.time = 45.00;
-        $scope.getready = 15;
+        $scope.time = 0;
+        $scope.getready = 10;
 
         var delay = function(){
             if ($scope.getready > 0){
@@ -139,33 +186,9 @@ app.controller('TestController', function($scope, $timeout, MainFactory) {
                 };
         }
 
-        var reset1 = function () {
-            console.log('inside reset1');
-            $scope.resetOn = false;
-            // console.log($scope.resetOn);
-            $scope.isDisabled = false;
-            $scope.resetDisabled = true;
-            $scope.text = $scope.paragraphs[$scope.new_paragraph]
-            $scope.finished = "";
-            $scope.time = "";
-            $scope.index = 0;
-            $scope.results = '';
-            $scope.totaltype = '';
-            $scope.type = '';
-            $scope.wpm = 0;
-            $scope.progress = 0;
-            $scope.text_disable = true;
-            $scope.current = "";
-            $scope.getready = "";
-        }
-
         var countdown = function() {
             document.getElementById('text-in').focus()
 
-            // activate reset button after delay
-            if ($scope.time < 43){
-                $scope.resetDisabled = false;
-            }
             // call reset
             if ($scope.resetOn == true){
                 reset1();
@@ -194,37 +217,37 @@ app.controller('TestController', function($scope, $timeout, MainFactory) {
                 $scope.totaltype += $scope.type
                 $scope.type = '';
                 $scope.progress = Math.round(100*$scope.totaltype.length/$scope.total_length);
-                $scope.wpm = Math.round(($scope.totaltype.length/5)/(45-$scope.time)*60);
+                $scope.wpm = Math.round(($scope.totaltype.length/5)/($scope.time)*60);
             }
             // give score if finished
             if ($scope.totaltype.length == $scope.total_length && $scope.totaltype[-1] == $scope.text[-1]){
-                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/5)/(45-$scope.time)*60)+'!'
+                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/5)/($scope.time)*60)+'!'
                 $scope.getready = "";
-                addScore()
+                // addScore();
                 $scope.text_disable = true;
                 $scope.inputStyle = {'background-color':'none'};
                 $scope.resetDisabled = false;
                 $scope.resetOn = true;
                 return;
             }
-            // give score if time runs out
-            if ($scope.time <= 0){
-                $scope.wpm = Math.round($scope.totaltype.length/(15/4));
-                $scope.time = 0
-                if ($scope.wpm > 0){
-                    $scope.getready = "";
-                    $scope.results = 'Your wpm is '+$scope.wpm+'!'
-                    addScore();
-                };
-                // console.log($scope.scores);
-                $scope.text_disable = true;
-                $scope.type = "";
-                $scope.inputStyle = {'background-color':'none'};
-                $scope.resetDisabled = false;
-                $scope.resetOn = true;
-                return;
-            };
-            $scope.time -= 0.02;
+            // // give score if time runs out
+            // if ($scope.time <= 0){
+            //     $scope.wpm = Math.round($scope.totaltype.length/(15/4));
+            //     $scope.time = 0
+            //     if ($scope.wpm > 0){
+            //         $scope.getready = "";
+            //         $scope.results = 'Your wpm is '+$scope.wpm+'!'
+            //         // addScore();
+            //     };
+            //     // console.log($scope.scores);
+            //     $scope.text_disable = true;
+            //     $scope.type = "";
+            //     $scope.inputStyle = {'background-color':'none'};
+            //     $scope.resetDisabled = false;
+            //     $scope.resetOn = true;
+            //     return;
+            // };
+            $scope.time += 0.02;
             $scope.time = Math.round($scope.time*100)/100;
             $timeout(countdown, 20);
         }

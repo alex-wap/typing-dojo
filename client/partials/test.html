@@ -3,16 +3,21 @@
 $(document).ready(function (){
     var interval;
     var socket = io.connect();
+    socket.on('sorry', function(){
+        $('#users').html("Sorry, there are too many people playing. Please try again later.");
+    });
     socket.emit("game on");
-    socket.on('all users', function(clients){
-        $('#all_users').html(clients);
+    socket.on('show paragraph', function(paragraph){
+        angular.element('#TestController').scope().start(paragraph);
+    });
+    socket.on('game start', function(clients){
         $('#users').html("Users Connected: "+clients.length);
     });
     socket.on('player join', function(clients){
         interval = setInterval(function () {
+            console.log(socket);
             socket.emit("update",{
-            	getready : angular.element('#TestController').scope().getready,
-            	time : angular.element('#TestController').scope().time,
+                id : socket.id,
             	progress : angular.element('#TestController').scope().progress,
             	wpm : angular.element('#TestController').scope().wpm
             });
@@ -24,18 +29,21 @@ $(document).ready(function (){
 
     socket.on('update position', function(data){
         console.log(data);
-        angular.element('#TestController').scope().time = data.time;
-        angular.element('#TestController').scope().getready = data.getready;
-        $('#progress_bar').html('<br><div class="col s2">Opponent</div><div class="col s8"><div class="progress"><div class="determinate" style="width:'+data.progress+'%"></div></div></div><div class="col s2">'+data.wpm+' wpm</div>');
+        if (data.progress == 100){
+            angular.element('#TestController').scope().nextRace = true;
+        }
+        $('#progress_bar').html('<br><div class="col s2"><span class="red-text">'+data.id+'</span></div><div class="col s8"><div class="progress"><div class="determinate red" style="width:'+data.progress+'%"></div></div></div><div class="col s2">'+data.wpm+' wpm</div>');
     });
-
+    $('#giveup').click( function(){
+        socket.disconnect();
+        socket.emit("update",{progress : 0, wpm : 0});
+    });
 });
 
 </script>
 <br>
 <div class="row">
-<div class="col s12" id="all_users"></div>
-    <div class="col s12" id="users"></div>
+<div class="col s12" id="users"><h2 class="center">Waiting for opponent to join!</h2></div>
 </div>
 <div class="divider"></div>
 
@@ -71,5 +79,8 @@ $(document).ready(function (){
         <input type="text" id="text-in" placeholder="Type the above text here when the race begins" ng-model='type' ng-trim="false" ng-disabled="text_disable" ng-style="inputStyle">
     </div>
 </div>
-    <b><span ng-bind='results'></span></b>
+    <b><span ng-bind='results'></span></b><br><br>
+<div ng-show='nextRace'>
+    <a href="#/test" class="waves-effect waves-light btn green" onclick="location.reload()">Start Next Race</a>
+</div>
 </div>
