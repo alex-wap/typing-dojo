@@ -6,7 +6,7 @@ var bodyParser      = require("body-parser"),
     path            = require("path"),
     port            = require(path.join(__dirname,"./server/config/settings.js")).port,
     app             = express(),
-    clients         = [];
+    previous;
 
 ////////////////////////////////////////////////////////////
 //             App.use (Body Parser, Static)              //
@@ -51,52 +51,45 @@ var room;
 // on connection
 io.sockets.on('connection', function (socket) {
   if (io.engine.clientsCount % 2 == 1){
-    clients.push(socket.id);
-    room = socket.id;
+    // clients.push(socket.id);
+    room = socket.id.substring(0,6);
     socket.join(room);
+    io.to(room).emit('room name',room);
     console.log("number of users in room "+ room +": "+io.sockets.adapter.rooms[room].length)
   }
-  // if (io.engine.clientsCount > 2){
-  //   io.to(socket.id).emit('sorry');
-  //   socket.disconnect();
-  // } 
   if (io.engine.clientsCount % 2 == 0){
     // update client list on client
     socket.join(room);
-    clients.push(socket.id);
+    io.to(room).emit('room name',room);
+    // clients.push(socket.id);
     console.log("number of users in room "+ room +": "+io.sockets.adapter.rooms[room].length)
-    io.to(room).emit('game start', clients);
+    io.to(room).emit('game start', io.sockets.adapter.rooms[room].length);
   }
 
 
-  // update client list on disconnect
+  // update client list on disconnect, uneeded
   socket.on('disconnect', function(socket) {
-    var i = clients.indexOf(socket.id);
-    clients.splice(i, 1);
-    console.log(clients.length);
+    // var i = clients.indexOf(socket.id);
+    // clients.splice(i, 1);
+    // console.log(clients.length);
     // update client list on client
     // io.emit('all users', clients);
   });
 
-
   // broadcast positions
   socket.on("update",function(data){
     console.log(data);
-    console.log(socket.id);
-    data["id"] = socket.id
-    socket.broadcast.emit('update position', data); 
+    socket.to(data["room"]).emit('update position', data); 
   })
 
-  // setInterval(function(){
-  //   socket.emit('update position', 'Cow goes moo'); 
-  // }, 2000);
-
   // start game if client count is greater than 1
-  socket.on("game on", function (data){
-    if (io.sockets.adapter.rooms[room].length == 2){
-      var paragraph = paragraphs[Math.floor(Math.random()*paragraphs.length)] // change for 3+ players
+  socket.on("game on", function (room){
+    if (io.sockets.adapter.rooms[room].length == 2){    // change for 3+ players
+      var paragraph = paragraphs[Math.floor(Math.random()*paragraphs.length)];
+      if (previous == paragraph){paragraph = paragraphs[Math.floor(Math.random()*paragraphs.length)]};
       io.to(room).emit('show paragraph', paragraph);
-      io.to(room).emit('player join', clients);
+      io.to(room).emit('player join');
+      previous = paragraph;
     }
   })
 

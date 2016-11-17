@@ -11,17 +11,13 @@ app.config(function ($routeProvider) {
     .when('/',{
         templateUrl: 'partials/index.html',
         controller: 'GameController'     
-    })  
-    .when('/play',{
-        templateUrl: 'partials/play.html',
-        controller: 'GameController'     
-    })
+    }) 
     .when('/speed',{
         templateUrl: 'partials/speed.html',
         controller: 'MainController'     
     })  
-    .when('/test',{
-        templateUrl: 'partials/test.html',
+    .when('/play',{
+        templateUrl: 'partials/play.html',
     })
     .otherwise({
         redirectTo: '/'
@@ -41,7 +37,7 @@ app.factory('MainFactory', function($http) {
     }
     factory.create = function(score, callback) {
         $http.post('/scores', score).then(function(response) {
-            // console.log('Create Method', response);
+            console.log('Create Method', response);
             callback(response.data);
         })
     }
@@ -50,6 +46,7 @@ app.factory('MainFactory', function($http) {
             return factory.user;
         }
     }
+    factory.user = "";
     factory.paragraphs = ["Right now there are three people in chat, but there's no way of knowing exactly who until you are in there, and the chat room she finds not so comforting.",
                         "Prior to joining our bootcamp, we want to get you up to speed with our learning platform as you will be spending a lot of time learning new concepts.",
                         "Never gonna give you up, never gonna let you down. Never gonna run around and desert you. Never gonna make you cry, never gonna say goodbye.",
@@ -75,29 +72,12 @@ app.factory('MainFactory', function($http) {
 app.controller('TestController', function($scope, $timeout, MainFactory) {
     console.log('Test Controller loaded');
 
-    // $scope.username = prompt("please enter a username");
+    $scope.giveup = false;
+    $scope.timer;
+    $scope.room = "";
     $scope.paragraphs = MainFactory.paragraphs;
-
+    $scope.username = "";
     $scope.inputStyle = {'background-color':'none'}
-    // $scope.resetOn = false;
-    // $scope.editMode = false;
-    // $scope.isDisabled = false;
-    // $scope.resetDisabled = true;
-    // $scope.new_paragraph = 0;
-    // $scope.text = $scope.paragraphs[$scope.new_paragraph];
-    // $scope.total_length = $scope.text.length;
-    // $scope.words = $scope.text.split(" ");
-    // $scope.finished = "";
-    // var editAttr = {};
-    // for (var i = 0; i < $scope.words.length-1; i++){
-    //     $scope.words[i] = $scope.words[i]+" ";
-    // }
-    // $scope.totaltype = '';
-    // $scope.progress = 0;
-    // $scope.wpm = 0;
-
-    // $scope.index = 0;
-    // $scope.text_disable = true;
     $scope.start = function(paragraph) {
         console.log(paragraph);
         $scope.text = paragraph;
@@ -174,16 +154,18 @@ app.controller('TestController', function($scope, $timeout, MainFactory) {
             return;
         };
 
-        var timer = $timeout(delay,0);
+        $scope.timer = $timeout(delay,0);
 
         var addScore = function(){
-            if (!$scope.scores){
-                $scope.scores = [];
+            if ($scope.wpm > 0){
+                var date = new Date();
             };
-            var date = new Date();
-                if ($scope.wpm > 0){
-                    $scope.scores.push({speed:$scope.wpm,time:date});
-                };
+
+            MainFactory.create({name:MainFactory.user,speed:$scope.wpm,time:date}, function(data) {
+            if (data.errors) {
+                console.log(data.errors);
+            } 
+            })
         }
 
         var countdown = function() {
@@ -217,36 +199,30 @@ app.controller('TestController', function($scope, $timeout, MainFactory) {
                 $scope.totaltype += $scope.type
                 $scope.type = '';
                 $scope.progress = Math.round(100*$scope.totaltype.length/$scope.total_length);
-                $scope.wpm = Math.round(($scope.totaltype.length/5)/($scope.time)*60);
+                $scope.wpm = Math.round(($scope.totaltype.length/6)/($scope.time)*60);
             }
             // give score if finished
             if ($scope.totaltype.length == $scope.total_length && $scope.totaltype[-1] == $scope.text[-1]){
-                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/5)/($scope.time)*60)+'!'
+                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/6)/($scope.time)*60)+'!'
                 $scope.getready = "";
-                // addScore();
+                addScore();
                 $scope.text_disable = true;
                 $scope.inputStyle = {'background-color':'none'};
                 $scope.resetDisabled = false;
                 $scope.resetOn = true;
                 return;
             }
-            // // give score if time runs out
-            // if ($scope.time <= 0){
-            //     $scope.wpm = Math.round($scope.totaltype.length/(15/4));
-            //     $scope.time = 0
-            //     if ($scope.wpm > 0){
-            //         $scope.getready = "";
-            //         $scope.results = 'Your wpm is '+$scope.wpm+'!'
-            //         // addScore();
-            //     };
-            //     // console.log($scope.scores);
-            //     $scope.text_disable = true;
-            //     $scope.type = "";
-            //     $scope.inputStyle = {'background-color':'none'};
-            //     $scope.resetDisabled = false;
-            //     $scope.resetOn = true;
-            //     return;
-            // };
+            // if user gives up
+            if ($scope.giveup == true){
+                $scope.wpm = 0;
+                $scope.getready = "";
+                $scope.text_disable = true;
+                $scope.inputStyle = {'background-color':'none'};
+                $scope.resetDisabled = false;
+                $scope.resetOn = true;
+                return;
+            }
+
             $scope.time += 0.02;
             $scope.time = Math.round($scope.time*100)/100;
             $timeout(countdown, 20);
@@ -256,7 +232,9 @@ app.controller('TestController', function($scope, $timeout, MainFactory) {
 ////////////////////////////////////////////////////////////
 //                     End Game Timer                     //
 ////////////////////////////////////////////////////////////
-
+    $scope.endTimer = function () {
+         $timeout.cancel($scope.timer);
+    }
     $scope.reset = function () {
         console.log('inside reset');
         if ($scope.resetOn == false){
@@ -318,27 +296,14 @@ app.controller('TestController', function($scope, $timeout, MainFactory) {
         $scope.people = data;
     });
 
-    $scope.createPerson = function() {
-        $scope.errors = {};
-        console.log('Creating a person: Angular Controller');
-        MainFactory.create($scope.new_person, function(data) {
-            if (data.errors) {
-                console.log(data.errors);
-                $scope.errors = data.errors;
-            } else {
-                MainFactory.index(function(data) {
-                    $scope.people = data;
-
-                    $scope.new_person = {};
-                });
-            }
-        })
-    }
     $scope.storeUser = function() {
-        console.log($scope.username)
+        if ($scope.username.length == 0){return};
+        $scope.user = $scope.username;
+        console.log($scope.username);
         MainFactory.user = $scope.username;
-        console.log(MainFactory.username)
-        $location.url('/');
+        console.log(MainFactory.user);
+        $scope.username = "";
+        // $location.url('/');
     }
 })
 
@@ -428,13 +393,6 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
             if (data.errors) {
                 console.log(data.errors);
             } 
-            // else {
-            //     MainFactory.index(function(data) {
-            //         $scope.people = data;
-
-            //         $scope.new_person = {};
-            //     });
-            // }
             })
         }
 
@@ -493,12 +451,12 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
                 $scope.totaltype += $scope.type
                 $scope.type = '';
                 $scope.progress = Math.round(100*$scope.totaltype.length/$scope.total_length);
-                $scope.wpm = Math.round(($scope.totaltype.length/5)/(45-$scope.time)*60);
+                $scope.wpm = Math.round(($scope.totaltype.length/6)/(45-$scope.time)*60);
             }
             // give score if finished
             if ($scope.totaltype.length == $scope.total_length && $scope.totaltype[-1] == $scope.text[-1]){
                 console.log($scope.total_length+" characters in "+(45-$scope.time)+" seconds. with "+$scope.time+" seconds left.")
-                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/5)/(45-$scope.time)*60)+'!'
+                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/6)/(45-$scope.time)*60)+'!'
                 $scope.getready = "";
                 addScore()
                 $scope.text_disable = true;
@@ -601,22 +559,6 @@ app.controller('MainController', function($scope, $timeout, MainFactory) {
         $scope.editMode = true;
 
         $scope.edit_person = data
-    }
-    $scope.createPerson = function() {
-        $scope.errors = {};
-        console.log('Creating a person: Angular Controller');
-        MainFactory.create($scope.new_person, function(data) {
-            if (data.errors) {
-                console.log(data.errors);
-                $scope.errors = data.errors;
-            } else {
-                MainFactory.index(function(data) {
-                    $scope.people = data;
-
-                    $scope.new_person = {};
-                });
-            }
-        })
     }
 })
 ////////////////////////////////////////////////////////////
@@ -748,11 +690,11 @@ app.controller('GameController', function($scope, $timeout, MainFactory) {
                 $scope.totaltype += $scope.type
                 $scope.type = '';
                 $scope.progress = Math.round(100*$scope.totaltype.length/$scope.total_length);
-                $scope.wpm = Math.round(($scope.totaltype.length/5)/(45-$scope.time)*60);
+                $scope.wpm = Math.round(($scope.totaltype.length/6)/(45-$scope.time)*60);
             }
             // give score if finished
             if ($scope.totaltype.length == $scope.total_length && $scope.totaltype[-1] == $scope.text[-1]){
-                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/5)/(45-$scope.time)*60)+'!'
+                $scope.results = 'Nice typing! Your wpm is '+ Math.round(($scope.total_length/6)/(45-$scope.time)*60)+'!'
                 $scope.getready = "";
                 addScore()
                 $scope.text_disable = true;
@@ -849,22 +791,6 @@ app.controller('GameController', function($scope, $timeout, MainFactory) {
         $scope.people = data;
     });
 
-    $scope.createPerson = function() {
-        $scope.errors = {};
-        console.log('Creating a person: Angular Controller');
-        MainFactory.create($scope.new_person, function(data) {
-            if (data.errors) {
-                console.log(data.errors);
-                $scope.errors = data.errors;
-            } else {
-                MainFactory.index(function(data) {
-                    $scope.people = data;
-
-                    $scope.new_person = {};
-                });
-            }
-        })
-    }
     $scope.storeUser = function() {
         console.log($scope.username)
         MainFactory.user = $scope.username;

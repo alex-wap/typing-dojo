@@ -1,42 +1,75 @@
-<div id="GameController" ng-controller="GameController">
+<div id="TestController" ng-controller="TestController">
 <script type ="text/javascript">
 $(document).ready(function (){
     var interval;
     var socket = io.connect();
-    socket.emit("game on");
-    socket.on('total users', function(usercount){
-        $('#users').html("Users Connected: "+usercount);
+    socket.on('show paragraph', function(paragraph){
+        angular.element('#TestController').scope().start(paragraph);
     });
-    socket.on('player join', function(usercount){
-        if (usercount > 1){
-            interval = setInterval(function () {
-                socket.emit("update",{progress:angular.element('#GameController').scope().progress,wpm:angular.element('#GameController').scope().wpm});
-            },2000);
-            angular.element('#GameController').scope().realTimer();
-            console.log('add progress bar')
-            $('#progress_bar').html('<br><div class="col s2">Opponent</div><div class="col s8"><div class="progress"><div class="determinate" style="width:0%"></div></div></div><div class="col s2">0 wpm</div>');
-        }
+    socket.on('game start', function(){
+        $('#users').html("<h3 class='center'>Press GO! to start a race!</h3>");
+    });
+    socket.on('room name', function(room){
+        console.log(room);
+        angular.element('#TestController').scope().room = room;
+    });
+    socket.on('player join', function(){
+        interval = setInterval(function () {
+            // console.log(socket);
+            socket.emit("update",{
+                user : angular.element('#TestController').scope().user,
+                room : angular.element('#TestController').scope().room,
+            	progress : angular.element('#TestController').scope().progress,
+            	wpm : angular.element('#TestController').scope().wpm
+            });
+        },2000);
+        angular.element('#TestController').scope().realTimer();
+        console.log('add progress bar')
+        $('#progress_bar').html('<br><div class="col s2">Opponent</div><div class="col s8"><div class="progress"><div class="determinate" style="width:0%"></div></div></div><div class="col s2">0 wpm</div>');
     });
 
     socket.on('update position', function(data){
+        $('#users').html("<h3 class='center'>Good Luck!</h3>");
         console.log(data);
-        $('#progress_bar').html('<br><div class="col s2">Opponent</div><div class="col s8"><div class="progress"><div class="determinate" style="width:'+data.progress+'%"></div></div></div><div class="col s2">'+data.wpm+' wpm</div>');
+        if (data.progress == 100){
+            angular.element('#TestController').scope().nextRace = true;
+        }
+        if (data.user == undefined){data.user = "Opponent"};
+        $('#progress_bar').html('<br><div class="col s2"><span class="red-text">'+data.user+'</span></div><div class="col s8"><div class="progress"><div class="determinate red" style="width:'+data.progress+'%"></div></div></div><div class="col s2">'+data.wpm+' wpm</div>');
     });
-
+    // $('#giveup').click( function(){
+    //     socket.disconnect();
+    //     socket.emit("update",{progress : 0, wpm : 0});
+    // });
+    $('#ready').click( function(){
+        if ((angular.element('#TestController').scope().getready) > 0){return}
+        if (angular.element('#TestController').scope().getready != "GO!"){
+            clearInterval(interval);
+            angular.element('#TestController').scope().giveup = false;
+            socket.emit("game on",angular.element('#TestController').scope().room);    
+        }
+        // clearInterval(interval);
+    });
+    // $('#next_race').click( function(){
+    //     angular.element('#TestController').scope().giveup = true;
+    //     // clearInterval(interval);
+    //     $('#users').html("Click GO! to start a race!");
+    //     angular.element('#TestController').scope().new();
+    // });
 });
 
 </script>
 <br>
 <div class="row">
-    <div class="col s12" id="users"></div>
+<div class="col s12" id="users"><h3 class="center">Waiting for opponent to join!</h3></div>
 </div>
 <div class="divider"></div>
 
 <div class="row">
-    <div class="col s4"><h4>Good Luck!</h4></div>
-    <div class="col s2"><h4 class="red-text">{{getready}}</h4></div>
+<!--     <div class="col s4"><h4>Good Luck!</h4></div> -->
     <div class="col s2"><h4>Time:</h4></div>
-    <div class="col s2"><h4 ng-bind='time'></h4></div>
+    <div class="col s2"><h4 ng-bind='time' id="time"></h4></div>
+    <div class="col s2"><h4 class="red-text" ng-bind='getready' id="getready"></h4></div>
 </div>
 <!-- start progress bar -->
 <!-- start socket input -->
@@ -44,7 +77,7 @@ $(document).ready(function (){
 </div>
 <!-- end socket input -->
 <div class="row">
-    <div class="col s2">You</div>
+    <div class="col s2"><span ng-bind='user'></span><span ng-hide='user'>You</span></div>
     <div class="col s8">
         <div class="progress">
             <div class="determinate" style="width: {{progress}}%"></div>
@@ -64,9 +97,35 @@ $(document).ready(function (){
         <input type="text" id="text-in" placeholder="Type the above text here when the race begins" ng-model='type' ng-trim="false" ng-disabled="text_disable" ng-style="inputStyle">
     </div>
 </div>
-    <b><span ng-bind='results'></span></b>
-<!--     <br><br>
-    <a class="waves-effect waves-light btn green" ng-click="isDisabled || realTimer()">Start</a>
-    <a class="waves-effect waves-light btn orange" ng-click='resetDisabled || reset()'>Reset</a>
-    <a class="waves-effect waves-light btn red" ng-click='new()'>New</a> -->
+<br>
+<div class="divider"></div>
+
+    <h4 class="center"><span ng-bind='results'></span></h4><br><br>
+
+<div class="row">
+    <div class="col l12">
+        <h5>Instructions</h5>
+        <p>Submit a username below. Wait for an opponent to join, then press the GO! button.<br> 
+        You will have 10 seconds to prepare your hands, then text box will be enabled and the race will start.<br>
+        After the race is complete, press the GO! button again to start a new race.</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col l3">
+        <div class="input-field inline">
+            <label for="username">Username</label>
+            <input type="text" id="username" ng-model='username'> 
+            <!-- ng-model='' ng-trim="false" ng-disabled="text_disable" ng-style="inputStyle" -->
+        </div>
+    </div>
+    <div class="col l2">
+        <br><button class="btn waves-effect waves-light orange" ng-click='storeUser()'>Submit</button>
+    </div>
+    <div class="col l2">
+        <br><button class="btn waves-effect waves-light green" id="ready">Go!</button>
+    </div>
+<!--     <div class='col l2' ng-show='nextRace'>
+        <br><button class="waves-effect waves-light btn red" id="next_race">Give Up</button>
+    </div> -->
+</div>
 </div>
