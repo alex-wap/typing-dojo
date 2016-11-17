@@ -12,9 +12,9 @@ JavaScript, MongoDB, Express.js, AngularJS, Node.js, Socket.io, Materialize, AWS
 
 ### To Do
 
-* Multiplayer with 3+ players
+* Multiplayer with 3+ players per room
 * More excerpts 
-* Private rooms
-* Ready up button for timing
-* Add ghost race option
+* Private rooms with invite links
+* Add ghost race option for single player
 * Add time to complete in results
+* Refactor
