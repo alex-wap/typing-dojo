@@ -1,4 +1,4 @@
-## [Typing Dojo](http://54.175.81.151/)
+## [Typing Dojo](http://typing-dojo.alexw.tech/)
 
 
 Typing Dojo is a typing game that lets you race against other users in real time (using web sockets).
