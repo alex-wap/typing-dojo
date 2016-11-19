@@ -22,5 +22,5 @@ JavaScript, MongoDB, Express.js, AngularJS, Node.js, Socket.IO, Materialize, AWS
 
 ## Screenshots:
 
-![screenshot 1](https://github.com/alex-wap/typing-dojo/tree/master/ss/t.PNG "Screenshot 1")
-![screenshot 2](https://github.com/alex-wap/typing-dojo/tree/master/ss/t2.PNG "Screenshot 2")
+![screenshot 1](https://github.com/alex-wap/typing-dojo/blob/master/ss/t.png "Screenshot 1")
+![screenshot 2](https://github.com/alex-wap/typing-dojo/blob/master/ss/t2.png "Screenshot 2")
